@@ -1,0 +1,58 @@
+#!/bin/bash
+
+MP3="mp3"
+FLAC="flac"
+
+PLAYLIST="--yes-playlist"
+NOPLAYLIST="--no-playlist"
+
+STRING="youtube-dl --output ""~/Downloads/%(title)s.%(ext)s"" -x --audio-format"
+CACHE="--audio-quality 0 --limit-rate 2M --no-cache-dir --rm-cache-dir --geo-bypass --sleep-interval 1"
+
+VIDSTRING="youtube-dl --output ""~/Downloads/%(title)s.%(ext)s"" -f"
+VIDCACHE="--limit-rate 2M --no-cache-dir --rm-cache-dir --geo-bypass --sleep-interval 1"
+
+while true
+do
+
+OPTION=$(zenity --list \
+--width 600 --height 290 \
+--title="Simple Youtube-dl GUI" \
+--text="Choose a file format:" \
+--radiolist \
+--column="" --column="Format		" --column="Description" \
+FALSE   MP3 "Audio File Format" \
+FALSE   FLAC "Audio File Format" \
+FALSE   MP4 "Video File Format" \
+)
+
+case $OPTION in
+
+"MP3")
+ENTRY=$(zenity --text-info --width=640 --height=480 --editable \
+       --title="Paste mp3 Links:" \
+       )
+$STRING $MP3 $CACHE $ENTRY | (zenity --width=300 --height=100 --title="Processing Command" --text="In Progress..." --progress --pulsate --auto-kill --auto-close)
+;;
+
+"FLAC")
+ENTRY=$(zenity --text-info --width=640 --height=480 --editable \
+       --title="Paste flac Links:" \
+       )
+$STRING $FLAC $CACHE $ENTRY | (zenity --width=300 --height=100 --title="Processing" --text="In Progress..." --progress --pulsate --auto-kill --auto-close) 
+;;
+
+"MP4")
+ENTRY=$(zenity --text-info --width=640 --height=480 --editable \
+       --title="Paste video Links:" \
+       )
+$VIDSTRING "bestvideo[ext=mp4] + bestaudio" $VIDCACHE $ENTRY | (zenity --width=300 --height=100 --title="Processing" --text="In Progress..." --progress --pulsate --auto-kill --auto-close)
+;;
+
+esac
+
+if zenity --question --text="Exit the Program?"; then
+    exit
+fi
+
+done
