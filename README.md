@@ -1,2 +1,2 @@
 # simple-ytdl-gui
-Simple YouTube-dl GUI application
+Simple GUI for youtube-dl, made with bash and zenity.
