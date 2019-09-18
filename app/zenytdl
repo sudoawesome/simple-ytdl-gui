@@ -51,7 +51,7 @@ $VIDSTRING "bestvideo[ext=mp4] + bestaudio" $VIDCACHE $ENTRY | (zenity --width=3
 
 esac
 
-if zenity --question --text="Exit the Program?"; then
+if zenity --question --title="Exit" --text="Exit the Program?"; then
     exit
 fi
 
