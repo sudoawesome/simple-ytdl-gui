@@ -1,16 +1,22 @@
-#!/bin/bash
+#!/bin/bash --
 
-MP3="mp3"
-FLAC="flac"
+MP3='mp3';
+FLAC='flac';
+OPUS='opus';
+MP4="bestvideo[ext=mp4]"'+'"best";
 
-PLAYLIST="--yes-playlist"
-NOPLAYLIST="--no-playlist"
+PLAYLIST='--yes-playlist';
+NOPLAYLIST='--no-playlist';
 
-STRING="youtube-dl --output ""~/Downloads/%(title)s.%(ext)s"" -x --audio-format"
-CACHE="--audio-quality 0 --limit-rate 2M --no-cache-dir --rm-cache-dir --geo-bypass --sleep-interval 1"
+STRING="youtube-dl --output ""~/Downloads/%(title)s.%(ext)s"" -x --audio-format";
+CACHE="--audio-quality 0 --limit-rate 2M --no-cache-dir --rm-cache-dir --geo-bypass --sleep-interval 1";
 
-VIDSTRING="youtube-dl --output ""~/Downloads/%(title)s.%(ext)s"" -f"
-VIDCACHE="--limit-rate 2M --no-cache-dir --rm-cache-dir --geo-bypass --sleep-interval 1"
+VIDSTRING="youtube-dl --output ""~/Downloads/%(title)s.%(ext)s"" -f";
+VIDCACHE="--limit-rate 2M --no-cache-dir --rm-cache-dir --geo-bypass --sleep-interval 1";
+
+function zenproc() {
+local procbar=`(zenity --width=300 --height=100 --title="Processing Command" --text="In Progress..." --progress --pulsate --auto-kill --auto-close)`;
+}
 
 while true
 do
@@ -23,6 +29,7 @@ OPTION=$(zenity --list \
 --column="" --column="Format		" --column="Description" \
 FALSE   MP3 "Audio File Format" \
 FALSE   FLAC "Audio File Format" \
+FALSE   OPUS "Audio File Format" \
 FALSE   MP4 "Video File Format" \
 )
 
@@ -30,29 +37,36 @@ case $OPTION in
 
 "MP3")
 ENTRY=$(zenity --text-info --width=640 --height=480 --editable \
-       --title="Paste mp3 Links:" \
-       )
-$STRING $MP3 $CACHE $ENTRY | (zenity --width=300 --height=100 --title="Processing Command" --text="In Progress..." --progress --pulsate --auto-kill --auto-close)
+		--title="Paste mp3 Links:" \
+		)
+$STRING $MP3 $CACHE $ENTRY | zenproc
 ;;
 
 "FLAC")
 ENTRY=$(zenity --text-info --width=640 --height=480 --editable \
-       --title="Paste flac Links:" \
-       )
-$STRING $FLAC $CACHE $ENTRY | (zenity --width=300 --height=100 --title="Processing" --text="In Progress..." --progress --pulsate --auto-kill --auto-close) 
+		--title="Paste flac Links:" \
+		)
+$STRING $FLAC $CACHE $ENTRY | zenproc
+;;
+
+"OPUS")
+ENTRY=$(zenity --text-info --width=640 --height=480 --editable \
+		--title="Paste opus Links:" \
+		)
+$STRING $OPUS $CACHE $ENTRY | zenproc
 ;;
 
 "MP4")
 ENTRY=$(zenity --text-info --width=640 --height=480 --editable \
-       --title="Paste video Links:" \
-       )
-$VIDSTRING "bestvideo[ext=mp4] + bestaudio" $VIDCACHE $ENTRY | (zenity --width=300 --height=100 --title="Processing" --text="In Progress..." --progress --pulsate --auto-kill --auto-close)
+		--title="Paste video Links:" \
+		)
+$VIDSTRING $MP4 $VIDCACHE $ENTRY | zenproc
 ;;
 
 esac
 
-if zenity --question --title="Exit" --text="Exit the Program?"; then
-    exit
+if zenity --question --title="Exit" --text="Exit?"; then
+		exit
 fi
 
 done
